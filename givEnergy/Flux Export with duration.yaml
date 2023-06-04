@@ -1,0 +1,27 @@
+alias: Flux - Start Force Export on Inverters
+description: ""
+trigger:
+  - platform: time
+    at: "16:00:00"
+condition:
+  # input.number.force_export_start_percentage is a helper and can be created under settings -> Integrations -> Helpers -> # Add new Helper -> Number.
+  # Create it and then add it to your dashboard so that you can control it.
+    - condition: numeric_state
+      entity_id: sensor.givtcp_<serial number>_soc
+      above: input_number.force_export_start_percentage
+action:
+  - repeat:
+      count: 4
+      sequence:
+        - service: select.select_option
+          target:
+            entity_id: select.givtcp_l1_ce2225g009_force_export
+          data:
+            option: "{{ states(entity_force_export_time) | int(2) }}"
+        - delay: "00:00:02"
+
+mode: restart
+variables:
+  entity_force_export_time: input_select.force_export_duration  
+  # input_select.force_export_duration is a helper and can be created under settings -> Integrations -> Helpers -> # Add new Helper -> Dropdown.
+  # Create it and then add it to your dashboard so that you can control it.

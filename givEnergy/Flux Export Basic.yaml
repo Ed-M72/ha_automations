@@ -1,0 +1,16 @@
+alias: Flux - Start Force Export on Inverters
+description: ""
+trigger:
+  - platform: time
+    at: "16:00:00"
+condition:
+    - condition: numeric_state
+      entity_id: sensor.givtcp_<serial number>_soc
+      above: 90
+action:
+  - service: input_number.set_value
+    target:
+      entity_id: input_number.force_export_current_duration
+    data:
+      value: 60
+mode: single
